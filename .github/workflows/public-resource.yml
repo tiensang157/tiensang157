@@ -1,0 +1,27 @@
+name: Public resource
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cập nhật bảng
+        run: python .github/scripts/public_resource.py
+
+      - name: Đưa lên main
+        run: |
+          git add README.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git -c user.name=zienshang -c user.email=chuppachup2030@gmail.com commit -m "Cập nhật public resource."
+          git push
